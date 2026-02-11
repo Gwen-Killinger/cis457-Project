@@ -23,9 +23,16 @@ connection, address = mysocket.accept()
 client_IP = address[0]
 print(f'A TCP connection is opened for {client_IP}')
 
-# Recieves endoced message sent by the user
-received_data = connection.recv(1024)
-print(f'{client_IP} said: {received_data.decode()}')
+
+while True:
+    # Recieves endoced message sent by the user
+    received_data = connection.recv(1024)
+    print(f'{client_IP} said: {received_data.decode()}')
+    connection.send('Message Recieved'.encode())
+    
+    if received_data.decode() == "quit":
+        break
+
 
 # Reply message sent to the client
 connection.send('Goodbye client!'.encode())
