@@ -1,21 +1,23 @@
 # cis457-Project
 Sever/Client Socket App
 
+By: Gwen Killinger, Hailey Zweedyk, Charlie Monterroso
+
 Project Description
 
 In this project you will be creating a chat application from scratch.
 
 Programming: The goal of the project is to teach you the fundamentals of socket programming. You can use any programming language you want, but it has to include sockets.
 
-Deadlines
-Team creation: Tuesday, January 20
-Project part 1: Monday, February 16
-Project part 2: Monday, March 16
-Project part 3: Monday, April 20
+Deadlines<br>
+~~Team creation: Tuesday, January 20<br>~~
+Project part 1: Monday, February 16<br>
+Project part 2: Monday, March 16<br>
+Project part 3: Monday, April 20<br>
 
 Team creation: This is a group project. It can be done in groups of 2 or 3 people. If you do not form a team on your own, one will be assigned to you. Exceptions for individual projects or larger teams can be made upon request.
 
-Part 1: Create a program with two components, a client and a server. The two programs should be able to connect to each other and send at least one message each before the program terminates. The messages must be typed by the user (both on the client side and on the server side), transmitted through the socket, and shown on the other end. You must use socket programming (e.g. import the library socket in Python), but there is no need to use threads or any other library. The program can terminate after the successful transmission of the message. There is no need to use two machines, you can run both programs on the same computer.
+~~Part 1: Create a program with two components, a client and a server. The two programs should be able to connect to each other and send at least one message each before the program terminates. The messages must be typed by the user (both on the client side and on the server side), transmitted through the socket, and shown on the other end. You must use socket programming (e.g. import the library socket in Python), but there is no need to use threads or any other library. The program can terminate after the successful transmission of the message. There is no need to use two machines, you can run both programs on the same computer.~~
 
 Part 2: Expand upon your previous program with the following improvements; Both the client and the server must remain online after the successful transmission of a message and they must be able to continue to chat indefinitely. The same person must be able to send multiple messages in a row. You are encouraged to use infinite loops and multithreading (e.g. import the library threading in Python).
 
@@ -23,6 +25,6 @@ Part 3: The server program is only used as a server to relay messages between cl
 
 Demo: At the last week of classes, each team must do a live demo of their project to the instructor (not in class). You cannot receive a grade for your project without a demo. All team members must be present.
 
-10 Bonus points: Demo your project using at least two different machines.
-10 Bonus points: Ability to send a message to individual users (not just group chat).
-10 Bonus points: Ability to send any file.
+10 Bonus points: Demo your project using at least two different machines.<br>
+10 Bonus points: Ability to send a message to individual users (not just group chat).<br>
+10 Bonus points: Ability to send any file.<br>
