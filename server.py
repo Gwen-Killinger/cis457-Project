@@ -3,7 +3,7 @@ import socket
 
 # Host - 127.0.0.1 is localhost 
 # Port # - Any port larger than 1023
-IP_Port = ('127.0.0.1', 8008)
+IP_Port = ('127.0.0.1', 6767)
  
 # Creates socket object with IPv4 and TCP
 # AF_INET - IPv4

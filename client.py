@@ -3,7 +3,7 @@ import socket
 
 # Host - 127.0.0.1 is localhost 
 # Port # - Any port larger than 1023
-IP_Port = ('127.0.0.1', 8008)
+IP_Port = ('127.0.0.1', 6767)
 
 # Creates socket object with IPv4 and TCP
 # AF_INET - IPv4
@@ -18,6 +18,6 @@ print(f'== Connected to {IP_Port[0]} ==')
 message = input('Message: ')
 mysocket.send(message.encode())
 
-# Recieves data sent by server
+# Recieves data sent by servcer
 received_data = mysocket.recv(1024)
 print(f'Server says: {received_data.decode()}')
