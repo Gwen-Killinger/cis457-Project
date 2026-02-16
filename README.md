@@ -3,7 +3,12 @@ Sever/Client Socket App
 
 By: Gwen Killinger, Hailey Zweedyk, Charlie Monterroso
 
-Project Description
+## Running the App
+- Step 1: run python server.py
+- Step 2: run python client.py in sperate terminal
+- Step 3: Type a message in to clients terminal
+
+## Project Description
 
 In this project you will be creating a chat application from scratch.
 
@@ -11,7 +16,7 @@ Programming: The goal of the project is to teach you the fundamentals of socket 
 
 Deadlines<br>
 ~~Team creation: Tuesday, January 20<br>~~
-Project part 1: Monday, February 16<br>
+~~Project part 1: Monday, February 16<br>~~
 Project part 2: Monday, March 16<br>
 Project part 3: Monday, April 20<br>
 
@@ -28,3 +33,4 @@ Demo: At the last week of classes, each team must do a live demo of their projec
 10 Bonus points: Demo your project using at least two different machines.<br>
 10 Bonus points: Ability to send a message to individual users (not just group chat).<br>
 10 Bonus points: Ability to send any file.<br>
+
