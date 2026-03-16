@@ -6,7 +6,10 @@ clients = []
 
 def clientHandler(connection, address):
     while True:
-        data = connection.recv(1024)
+        try:
+            data = connection.recv(1024)
+        except:
+            break
         if not data:
             print("\nClosing Connection")
             break
@@ -19,9 +22,13 @@ def serverSender():
     while True:
         message = input("Message: ")
         if message == "quit":
+            clients[0].send(('Server Closing').encode())
             break
         if clients:
-            clients[0].send((message).encode())
+            try:
+                clients[0].send((message).encode())
+            except:
+                break
     connection.close()
     mysocket.close()
 

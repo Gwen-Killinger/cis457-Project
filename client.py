@@ -6,21 +6,30 @@ def senderThread(mysocket):
     while True:
         # Waits for message to be inputted by the user then encodes data and sends to the server
         message = input('Message: ')
-        mysocket.send((message).encode())
+        try:
+            mysocket.send((message).encode())
+        except:
+            print("Not connected to server client closing...")
+            break
         if message == "quit":
             mysocket.close()
             break
-
     return
 
 def listenerThread(mysocket):
     while True:
         # Recieves data sent by server
-        received_data = mysocket.recv(1024)
+        try:
+            received_data = mysocket.recv(1024)
+        except:
+            print("Client Closing...")
+            break
         print("\r" + " " * 50 + "\r", end="", flush=True)
-        print(f'Server: {received_data.decode()}', flush=True)
+        print(f'Server: {received_data.decode()}')
         print('Message: ', end="", flush=True)
-        if received_data.decode() == "Goodbye client!":
+
+        if received_data.decode() == 'Server Closing':
+            mysocket.close()
             break
     return
 
@@ -37,6 +46,7 @@ mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Connects to port opened by the server
 mysocket.connect(IP_Port)
 print(f'== Connected to {IP_Port[0]} ==')
+print('--Type quit to exit')
 
 threadSend = threading.Thread(target=senderThread, args=(mysocket,))
 threadListen = threading.Thread(target=listenerThread, args=(mysocket,))
