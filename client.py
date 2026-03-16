@@ -17,7 +17,8 @@ def listenerThread(mysocket):
     while True:
         # Recieves data sent by server
         received_data = mysocket.recv(1024)
-        print(f'\nServer: {received_data.decode()}')
+        print("\r" + " " * 50 + "\r", end="", flush=True)
+        print(f'Server: {received_data.decode()}', flush=True)
         print('Message: ', end="", flush=True)
         if received_data.decode() == "Goodbye client!":
             break
@@ -42,7 +43,3 @@ threadListen = threading.Thread(target=listenerThread, args=(mysocket,))
 
 threadSend.start()
 threadListen.start()
-
-# Recieves data sent by servcer
-received_data = mysocket.recv(1024)
-print(f'Server says: {received_data.decode()}')

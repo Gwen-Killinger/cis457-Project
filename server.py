@@ -10,8 +10,9 @@ def clientHandler(connection, address):
         if not data:
             print("\nClosing Connection")
             break
-        print("\n", address, data.decode())
-        print('Message: ', end="", flush=True)
+        print("\r" + " " * 50 + "\r", end="")
+        print(f"Client: {data.decode()}")
+        print("Message: ", end="", flush=True)
     connection.close()
 
 def serverSender():
