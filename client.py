@@ -6,8 +6,9 @@ def senderThread(mysocket):
     while True:
         # Waits for message to be inputted by the user then encodes data and sends to the server
         message = input('Message: ')
-        mysocket.send(message.encode())
+        mysocket.send((message).encode())
         if message == "quit":
+            mysocket.close()
             break
 
     return
@@ -16,15 +17,16 @@ def listenerThread(mysocket):
     while True:
         # Recieves data sent by server
         received_data = mysocket.recv(1024)
-        print(f'Server says: {received_data.decode()}')
+        print(f'\nServer: {received_data.decode()}')
+        print('Message: ', end="", flush=True)
         if received_data.decode() == "Goodbye client!":
             break
     return
-    
+
 
 # Host - 127.0.0.1 is localhost 
 # Port # - Any port larger than 1023
-IP_Port = ('127.0.0.1', 8008)
+IP_Port = ('127.0.0.1', 6767)
 
 # Creates socket object with IPv4 and TCP
 # AF_INET - IPv4
@@ -35,27 +37,12 @@ mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 mysocket.connect(IP_Port)
 print(f'== Connected to {IP_Port[0]} ==')
 
-threadSend = threading.Thread(target=senderThread(mysocket))
-threadListen = threading.Thread(target=listenerThread(mysocket))
+threadSend = threading.Thread(target=senderThread, args=(mysocket,))
+threadListen = threading.Thread(target=listenerThread, args=(mysocket,))
 
 threadSend.start()
 threadListen.start()
 
 threadSend.join()
-threadListen.join
+threadListen.join()
 print("Threads closed, now closing...")
-
-
-'''
-while True:
-    # Waits for message to be inputted by the user then encodes data and sends to the server
-    message = input('Message: ')
-    mysocket.send(message.encode())
-    if message == "quit":
-        break
-
-# Recieves data sent by server
-received_data = mysocket.recv(1024)
-print(f'Server says: {received_data.decode()}')
-
-'''
