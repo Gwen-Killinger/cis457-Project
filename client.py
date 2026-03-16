@@ -43,6 +43,6 @@ threadListen = threading.Thread(target=listenerThread, args=(mysocket,))
 threadSend.start()
 threadListen.start()
 
-threadSend.join()
-threadListen.join()
-print("Threads closed, now closing...")
+# Recieves data sent by servcer
+received_data = mysocket.recv(1024)
+print(f'Server says: {received_data.decode()}')
