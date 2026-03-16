@@ -1,5 +1,29 @@
 #server.py
 import socket
+import threading
+
+clients = []
+
+def clientHandler(connection, address):
+    while True:
+        data = connection.recv(1024)
+        if not data:
+            print("\nClosing Connection")
+            break
+        print("\n", address, data.decode())
+        print('Message: ', end="", flush=True)
+    connection.close()
+
+def serverSender():
+    while True:
+        message = input("Message: ")
+        if message == "quit":
+            break
+        if clients:
+            clients[0].send((message).encode())
+    connection.close()
+    mysocket.close()
+
 
 # Host - 127.0.0.1 is localhost 
 # Port # - Any port larger than 1023
@@ -15,20 +39,12 @@ mysocket.bind(IP_Port)
 
 # Begins listening on the specifed socket
 mysocket.listen()
+serverSendingThread = threading.Thread(target=serverSender)
+serverSendingThread.start()
 
 # Program waits here until a client connect, accept() returns a socket object for 
 # the connection and a tuple (host, port) for the connected client.
 connection, address = mysocket.accept()
-
-client_IP = address[0]
-print(f'A TCP connection is opened for {client_IP}')
-
-# Recieves endoced message sent by the user
-received_data = connection.recv(1024)
-print(f'{client_IP} said: {received_data.decode()}')
-
-# Reply message sent to the client
-connection.send('Goodbye client!'.encode())
-
-# Closes Socket
-mysocket.close()
+clients.append(connection)
+clientListenerThread = threading.Thread(target=clientHandler, args=(connection, address))
+clientListenerThread.start()
