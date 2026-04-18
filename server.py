@@ -1,42 +1,51 @@
-#server.py
+# server.py
 import socket
 import threading
 
 clients = []
+usernames = {'': 0}
 
 def clientHandler(connection, address):
+    username = usernames[connection]
+
     while True:
         try:
             data = connection.recv(1024)
         except:
             break
         if not data:
-            print("\nClosing Connection")
             break
-        print("\r" + " " * 50 + "\r", end="")
-        print(f"Client: {data.decode()}")
-        print("Message: ", end="", flush=True)
-    connection.close()
 
-def serverSender():
-    while True:
-        message = input("Message: ")
+        message = data.decode()
         if message == "quit":
-            clients[0].send(('Server Closing').encode())
             break
-        if clients:
-            try:
-                clients[0].send((message).encode())
-            except:
-                break
+
+        full_message = f"{username}: {message}"
+        print(full_message)
+        broadcast(full_message.encode(), None)
+
+    # Cleanup on disconnect
+    print(f"{username} disconnected")
+
+    clients.remove(connection)
+    del usernames[connection]
     connection.close()
-    mysocket.close()
 
+    broadcast(f"{username} left the chat".encode(), None)
 
-# Host - 127.0.0.1 is localhost 
+def broadcast(message, sender):
+    for client in clients:
+        try:
+            client.send(message)
+        except:
+            client.close()
+            if client in clients:
+                clients.remove(client)
+
+# Host - 127.0.0.1 is localhost
 # Port # - Any port larger than 1023
 IP_Port = ('127.0.0.1', 6767)
- 
+
 # Creates socket object with IPv4 and TCP
 # AF_INET - IPv4
 # SOCK_STREAM - TCP
@@ -47,12 +56,31 @@ mysocket.bind(IP_Port)
 
 # Begins listening on the specifed socket
 mysocket.listen()
-serverSendingThread = threading.Thread(target=serverSender)
-serverSendingThread.start()
 
-# Program waits here until a client connect, accept() returns a socket object for 
+# Program waits here until a client connect, accept() returns a socket object for
 # the connection and a tuple (host, port) for the connected client.
-connection, address = mysocket.accept()
-clients.append(connection)
-clientListenerThread = threading.Thread(target=clientHandler, args=(connection, address))
-clientListenerThread.start()
+print("Server is running...")
+
+while True:
+    connection, address = mysocket.accept()
+
+    # Asks for a username
+    connection.send("Please Enter a Username".encode())
+    username = connection.recv(1024).decode()
+
+    # Ensures unique username
+    while username in usernames.values():
+        connection.send("Username is Already Taken".encode())
+        username = connection.recv(1024).decode()
+
+    # Save user
+    clients.append(connection)
+    usernames[connection] = username
+
+    print(f"{username} connected from {address}")
+
+    # Notify everyone
+    broadcast(f"{username} has joined the chat".encode(), None)
+
+    thread = threading.Thread(target=clientHandler, args=(connection, address))
+    thread.start()
