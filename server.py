@@ -5,32 +5,119 @@ import threading
 clients = []
 usernames = {'': 0}
 
+def send_private(message, recipient_username):
+
+    for conn, uname in usernames.items():
+        if uname == recipient_username:
+
+            try:
+                conn.send(message)
+
+            except:
+                conn.close()
+                if conn in clients:
+                    clients.remove(conn)
+
+
 def clientHandler(connection, address):
+
     username = usernames[connection]
 
     while True:
+
         try:
             data = connection.recv(1024)
         except:
             break
+
+
         if not data:
             break
 
-        message = data.decode()
+
+        # try decoding text
+        try:
+            message = data.decode()
+        except:
+            message = None
+
+
+        # quit
         if message == "quit":
             break
 
-        full_message = f"{username}: {message}"
-        print(full_message)
-        broadcast(full_message.encode(), None)
 
-    # Cleanup on disconnect
+        # file transfer
+        elif message is not None and message.startswith("/file"):
+
+            try:
+
+                filename = message.split(" ",1)[1]
+
+                print(f"{username} sent file: {filename}")
+
+                broadcast(
+                    f"{username} sent file: {filename}".encode(),
+                    None
+                )
+
+                file_bytes = connection.recv(1024)
+
+                broadcast(file_bytes, None)
+
+            except:
+                print("file transfer failed")
+
+
+        # private message
+        elif message is not None and message.startswith("@"):
+
+            parts = message.split(" ",1)
+
+            if len(parts) < 2:
+
+                connection.send(
+                    "Invalid DM format. Use: @username message".encode()
+                )
+
+                continue
+
+
+            target = parts[0][1:]
+
+            private_msg = parts[1]
+
+
+            if target not in usernames.values():
+
+                connection.send(
+                    f"user '{target}' not found".encode()
+                )
+
+                continue
+
+            send_private(
+                f"(DM) {username}: {private_msg}".encode(),
+                target
+            )
+
+
+        # normal chat
+        elif message is not None:
+
+            full_message = f"{username}: {message}"
+            print(full_message)
+            broadcast(full_message.encode(), None)
+
     print(f"{username} disconnected")
 
-    clients.remove(connection)
-    del usernames[connection]
-    connection.close()
+    if connection in clients:
+        clients.remove(connection)
 
+    if connection in usernames:
+        del usernames[connection]
+
+    connection.close()
     broadcast(f"{username} left the chat".encode(), None)
 
 def broadcast(message, sender):
@@ -84,3 +171,4 @@ while True:
 
     thread = threading.Thread(target=clientHandler, args=(connection, address))
     thread.start()
+

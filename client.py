@@ -2,12 +2,22 @@
 import socket
 import threading
 from tkinter.font import names
+import os
 
 
 def senderThread(mysocket):
     while True:
         # Waits for message to be inputted by the user then encodes data and sends to the server
         message = input('Message: ')
+
+        if message.startswith("/file"):
+            try:
+                _, filename = message.split(" ", 1)
+                sendFile(mysocket, filename)
+            except:
+                print("Usage: /file filename")
+            continue
+
         try:
             mysocket.send((message).encode())
         except:
@@ -20,21 +30,67 @@ def senderThread(mysocket):
     return
 
 def listenerThread(mysocket):
-    while True:
-        # Recieves data sent by server
-        try:
-            received_data = mysocket.recv(1024)
-        except:
-            print("Client Closing...")
-            break
-        print("\r" + " " * 50 + "\r", end="", flush=True)
-        print(received_data.decode())
-        print('Message: ', end="", flush=True)
 
-        if received_data.decode() == 'Server Closing':
-            mysocket.close()
+    while True:
+
+        try:
+
+            received_data = mysocket.recv(1024)
+
+        except:
+
+            print("Client Closing...")
+
             break
-    return
+
+
+        # try decoding message normally
+        try:
+
+            decoded = received_data.decode()
+
+
+            # server notifying file incoming
+            if "sent file:" in decoded:
+
+                print("\n" + decoded)
+
+                filename = decoded.split("sent file: ")[1]
+
+                # receive file bytes
+                file_bytes = mysocket.recv(1024)
+
+                with open("received_" + filename, "wb") as f:
+
+                    f.write(file_bytes)
+
+                print(f"File saved as received_{filename}")
+
+
+            else:
+
+                print("\r" + " " * 50 + "\r", end="")
+
+                print(decoded)
+
+                print('Message: ', end="", flush=True)
+
+
+        # binary data fallback
+        except:
+
+            with open("received_file", "ab") as f:
+
+                f.write(received_data)
+
+            print("\nReceiving file data...")
+
+
+        if received_data.decode(errors="ignore") == "Server Closing":
+
+            mysocket.close()
+
+            break
 
 def nameSanitizer(name):
     while True:
@@ -77,3 +133,15 @@ threadListen = threading.Thread(target=listenerThread, args=(mysocket,))
 
 threadSend.start()
 threadListen.start()
+
+
+def sendFile(mysocket, filename):
+    if not os.path.exists(filename):
+        print("File not found")
+        return
+
+    with open(filename, "rb") as f:
+        data = f.read()
+
+    mysocket.send(f"/file {filename}".encode())
+    mysocket.send(data)
